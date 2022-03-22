@@ -40,20 +40,19 @@ class FormularioTransferencia extends StatelessWidget {
             icone: Icons.monetization_on,
           ),
           ElevatedButton(
-              child: Text('Confirmar'),
-              onPressed: () => _criaTransferencia()),
+              child: Text('Confirmar'), onPressed: () => _criaTransferencia(context)),
         ],
       ),
     );
   }
 
-  void _criaTransferencia() {
-     final int? numeroConta =
-        int.tryParse(_controladorCampoNumeroConta.text);
-    final double? valor =
-        double.tryParse(_controladorCampoValor.text);
+  void _criaTransferencia(BuildContext context) {
+    final int? numeroConta = int.tryParse(_controladorCampoNumeroConta.text);
+    final double? valor = double.tryParse(_controladorCampoValor.text);
     if (numeroConta != null && valor != null) {
       final transferenciaCriada = Transferencia(valor, numeroConta);
+      debugPrint('Criando transferencia');
+      Navigator.pop(context, transferenciaCriada);
     }
   }
 }
@@ -99,7 +98,16 @@ class ListaTransferecias extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          final Future<Transferencia?> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            debugPrint('Chegou no then do future');
+            debugPrint('$transferenciaRecebida');
+          });
+        },
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
